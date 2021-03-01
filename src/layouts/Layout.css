@@ -1,0 +1,19 @@
+.Layouts{
+  height: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.Menu {
+  background-color: antiquewhite;
+  height: 100%;
+}
+
+.Content {
+  margin-top: 3rem;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+

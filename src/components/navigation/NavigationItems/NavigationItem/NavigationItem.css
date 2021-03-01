@@ -1,0 +1,51 @@
+.NavigationItem {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    background-color: antiquewhite;
+}
+
+.NavigationItem a {
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+    border-bottom: 10px solid blue;
+}
+
+.NavigationItem a:hover,
+.NavigationItem a:active,
+.NavigationItem a.active {
+    background-color: orange;
+    color: #40A4C8;
+    border-bottom: 4px solid blue;
+}
+
+
+
+/* vrijedi za sve iznad 500PX */
+@media (min-width: 500px) {
+    .NavigationItem {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 200px;
+        align-items: center;
+    }
+    
+    .NavigationItem a {
+        color: white;
+        height: 100%;
+        padding: 16px 10px;
+  
+    }
+
+
+    .NavigationItem a:hover,
+    .NavigationItem a:active,
+    .NavigationItem a.active {
+        background-color: green;
+        border-bottom: 4px solid red;
+        color: white;
+    }
+}

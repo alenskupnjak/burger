@@ -1,0 +1,12 @@
+.OrderSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: red;
+}
+
+.Polozaj {
+  padding: 0rem;
+  background-color: red;
+}
