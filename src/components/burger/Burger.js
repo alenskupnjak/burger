@@ -12,7 +12,7 @@ const burger = (props) => {
   }).reduce((prevValue,trenutnaVrijednost)=> {
     return prevValue.concat(trenutnaVrijednost)
   },[]);
-  console.log(novo);
+  // console.log(novo);
 
   // if(novo.length === 0) {
   //   novo = 'Upisi neku namirnicu';  
@@ -26,6 +26,7 @@ const burger = (props) => {
     }
   });
 
+  // crtam na ekran
   let renderDOM = novopolje.map((data, index) => {
     return <BurgerIngredient key={index} type={data[0]}></BurgerIngredient>;
   });

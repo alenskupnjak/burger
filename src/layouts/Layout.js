@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Auxx from './Auxx';
 import classes from './Layout.css';
 import Toolbar from '../components/navigation/Toolbar/Toolbar';
 import SideDrawer from '../components/navigation/SideDrawer/SideDrawer';

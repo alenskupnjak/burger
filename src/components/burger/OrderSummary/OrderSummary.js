@@ -13,7 +13,7 @@ const orderSummary = (props) => {
     )
   })
 
-  console.log(ingredientSummary);
+  console.log('orderSummary',ingredientSummary);
   
 
   return (

@@ -7,7 +7,7 @@ import Backdrop from '../../UI/Backdrop/Backdrop';
 import Auxx from '../../../layouts/Auxx';
 
 const sideDrawer = (props) => {
-  console.log(props);
+  console.log('sideDrawer',props);
 
   let attachedClasses = [classes.SideDrawer, classes.Close];
   if (props.openClose) {

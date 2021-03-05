@@ -6,34 +6,63 @@ import Modal from '../components/UI/Modal/Modal';
 import Spinner from '../components/UI/Spinner/Spinner';
 import OrderSummary from '../components/burger/OrderSummary/OrderSummary';
 import withErrorHandler from '../hoc/withErrorHandler';
-
-import axios from '../axious-orders';
+import axiosSetup from '../axious-orders';
 
 const INGREDIENT_PRICES = {
-  salad: 0.5,
-  bacon: 0.4,
-  cheese: 1.3,
-  meat: 0.7,
+  salad: 1,
+  bacon: 1,
+  cheese: 1,
+  meat: 1,
 };
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0,
-    },
+    ingredients: null,
     totalPrice: 4.0,
     purchasable: false,
     narudba: false,
     loadingSpinner: false,
   };
 
+  componentDidMount() {
+    axiosSetup
+      .get('/reactMaxBurgerIngredience.json')
+      .then((res) => {
+        console.log(res.data);
+        this.setState({
+          ingredients: {
+            salad: res.data.salad,
+            bacon: res.data.bacon,
+            cheese: res.data.cheese,
+            meat: res.data.meat,
+          },
+        }).catch(err=>{
+          console.log(err);
+        });
+
+        // provjeravam narucu order button
+        const disabledInfo = { ...this.state.ingredients };
+        for (let data in disabledInfo) {          
+          if (disabledInfo[data] !== 0) {
+            this.addIngredientHandler(data,'baza')
+            this.setState({purchasable : true})
+          } 
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  // 
   //  dodaje namirnice sa liste
-  addIngredientHandler = (type) => {
+  addIngredientHandler = (type, izBaze=null) => {
     const oldCount = this.state.ingredients[type];
-    const updatedCount = oldCount + 1;
+    let updatedCount = oldCount + 1;
+    if(izBaze) {
+      console.log('smanjio');
+      updatedCount--
+    }
     const kopijaIngredients = { ...this.state.ingredients };
     kopijaIngredients[type] = updatedCount;
     const dodanaCijenaNoveNamirnice = INGREDIENT_PRICES[type];
@@ -46,6 +75,7 @@ class BurgerBuilder extends Component {
     });
   };
 
+  // 
   // Mice namirnice sa liste
   removeIngredientHandler = (type) => {
     const oldCount = this.state.ingredients[type];
@@ -70,6 +100,7 @@ class BurgerBuilder extends Component {
     });
   };
 
+  // 
   //  ORDER narudba
   narudbaHandler = () => {
     console.log('narudba');
@@ -101,13 +132,13 @@ class BurgerBuilder extends Component {
       dostava: 'brza',
     };
     // Za FIREBASE obavezno dodati .json
-    axios
+    axiosSetup
       .post('/reactMaxBurgerOrders.json', order)
       .then((res) => {
-        this.setState({narudba: false, loadingSpinner: false});
+        this.setState({ narudba: false, loadingSpinner: false });
       })
       .catch((err) => {
-        this.setState({ narudba: false, loadingSpinner: false});
+        this.setState({ narudba: false, loadingSpinner: false });
         console.log(err);
       });
   };
@@ -115,7 +146,7 @@ class BurgerBuilder extends Component {
   render() {
     const disabledInfo = { ...this.state.ingredients };
 
-    for (let data in disabledInfo) {
+    for (let data in disabledInfo) {      
       if (disabledInfo[data] === 0) {
         disabledInfo[data] = true;
       } else {
@@ -123,17 +154,42 @@ class BurgerBuilder extends Component {
       }
     }
 
-    let orderSummary = (
-      <OrderSummary
-        ingredients={this.state.ingredients}
-        price={this.state.totalPrice}
-        zatvoriModal={this.otkazivanjeNarudbaHandler}
-        nastavakNarudbe={this.nastavakNarudbeHandler}
-      ></OrderSummary>
-    );
+    // definiram sumary
+    let orderSummary = null;
+    if (this.state.ingredients) {
+      orderSummary = (
+        <OrderSummary
+          ingredients={this.state.ingredients}
+          price={this.state.totalPrice}
+          zatvoriModal={this.otkazivanjeNarudbaHandler}
+          nastavakNarudbe={this.nastavakNarudbeHandler}
+        ></OrderSummary>
+      );
+      if (this.state.loadingSpinner) {
+        orderSummary = <Spinner />;
+      }
+    }
 
-    if(this.state.loadingSpinner) {
-      orderSummary= <Spinner/>
+    // 
+    let burger = <Spinner />;
+    
+    
+    // definiram ingredience
+    if (this.state.ingredients) {
+      burger = (
+        <Auxx>
+          <Burger ingredients={this.state.ingredients}></Burger>
+          <BurgerControls
+            namirnicaDodana={this.addIngredientHandler}
+            namirnicaOduzeta={this.removeIngredientHandler}
+            disabled={disabledInfo}
+            price={this.state.totalPrice}
+            mozeSeKupiti={this.state.purchasable}
+            narudbaFunc={this.narudbaHandler}
+          >
+          </BurgerControls>
+        </Auxx>
+      );
     }
 
     return (
@@ -144,20 +200,10 @@ class BurgerBuilder extends Component {
         >
           {orderSummary}
         </Modal>
-
-        <Burger ingredients={this.state.ingredients}></Burger>
-
-        <BurgerControls
-          namirnicaDodana={this.addIngredientHandler}
-          namirnicaOduzeta={this.removeIngredientHandler}
-          disabled={disabledInfo}
-          price={this.state.totalPrice}
-          mozeSeKupiti={this.state.purchasable}
-          narudbaFunc={this.narudbaHandler}
-        ></BurgerControls>
+           {burger}
       </Auxx>
     );
   }
 }
 
-export default  withErrorHandler(BurgerBuilder, axios);
+export default withErrorHandler(BurgerBuilder, axiosSetup);
